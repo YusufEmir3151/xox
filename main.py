@@ -13,12 +13,20 @@ CELL_SIZE = WIDTH // BOARD_SIZE
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
+GRAY = (125, 125, 125)
+BLUE = (0, 0, 255)
+
+# Kazanan belirleme
+kazanan_x = False
+kazanan_o = False
+
 
 def draw_board(screen):
     screen.fill(WHITE)
     for row in range(1, BOARD_SIZE):
         pygame.draw.line(screen, BLACK, (0, row * CELL_SIZE), (WIDTH, row * CELL_SIZE), 2)
         pygame.draw.line(screen, BLACK, (row * CELL_SIZE, 0), (row * CELL_SIZE, HEIGHT), 2)
+
 
 def draw_mark(screen, row, col, mark):
     x = col * CELL_SIZE + CELL_SIZE // 2
@@ -31,13 +39,17 @@ def draw_mark(screen, row, col, mark):
     elif mark == 'O':
         pygame.draw.circle(screen, BLACK, (x, y), radius // 2, 2)
 
+
 def get_cell(row, col):
     return col // CELL_SIZE, row // CELL_SIZE
+
 
 def reset_board():
     return [['' for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
 
+
 def main():
+    global kazanan_x, kazanan_o
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("XOX Oyunu")
@@ -45,6 +57,7 @@ def main():
     board = reset_board()
     turn = 'X'
     game_over = False
+    game_over_draw = False
 
     running = True
     while running:
@@ -56,6 +69,10 @@ def main():
                     board = reset_board()
                     turn = 'X'
                     game_over = False
+                elif game_over_draw:
+                    board = reset_board()
+                    turn = 'X'
+                    game_over_draw = False
                 else:
                     mouseX, mouseY = pygame.mouse.get_pos()
                     col, row = get_cell(mouseY, mouseX)
@@ -63,7 +80,6 @@ def main():
                         board[row][col] = turn
                         draw_mark(screen, row, col, turn)
                         turn = 'O' if turn == 'X' else 'X'
-
         draw_board(screen)
         for row in range(BOARD_SIZE):
             for col in range(BOARD_SIZE):
@@ -81,25 +97,47 @@ def main():
                     pygame.draw.line(screen, BLACK, (i * CELL_SIZE + CELL_SIZE // 2, CELL_SIZE // 2),
                                      (i * CELL_SIZE + CELL_SIZE // 2, HEIGHT - CELL_SIZE // 2), 3)
                     game_over = True
-            if board[0][0] == board[1][1] == board[2][2] != '':
+            if all(board[row][col] != '' for row in range(BOARD_SIZE) for col in range(BOARD_SIZE)):
+                game_over_draw = True
+            elif board[0][0] == board[1][1] == board[2][2] != '':
                 pygame.draw.line(screen, BLACK, (CELL_SIZE // 2, CELL_SIZE // 2),
                                  (WIDTH - CELL_SIZE // 2, HEIGHT - CELL_SIZE // 2), 3)
+                kazanan_o = True
+                kazanan_x = False
                 game_over = True
-            if board[0][2] == board[1][1] == board[2][0] != '':
+            elif board[0][2] == board[1][1] == board[2][0] != '':
                 pygame.draw.line(screen, BLACK, (CELL_SIZE // 2, HEIGHT - CELL_SIZE // 2),
                                  (WIDTH - CELL_SIZE // 2, CELL_SIZE // 2), 3)
+                kazanan_o = False
+                kazanan_x = True
                 game_over = True
 
         if game_over:
             font = pygame.font.Font(None, 36)
             text = font.render("Oyun Bitti!", True, RED)
-            screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height() // 2))
-            text = font.render("Yeniden Oynamak için Tıklayın", True, BLACK)
+            screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2.4 - text.get_height()))
+            if kazanan_x:
+                text = font.render("X Kazandı!", True, BLUE)
+                screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height()))
+            if kazanan_o:
+                text = font.render("O Kazandı!", True, BLUE)
+                screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height()))
+            text = font.render("Oynamak için Tıklayın", True, BLACK)
+            screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2.4 + text.get_height()))
+
+        if game_over_draw:
+            font = pygame.font.Font(None, 36)
+            text = font.render("Oyun Bitti!", True, RED)
+            screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2.6 - text.get_height() // 3))
+            text = font.render("Beraberlik!", True, GRAY)
+            screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2.2 + text.get_height() // 4))
+            text = font.render("Oynamak için Tıklayın", True, BLACK)
             screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 + text.get_height()))
 
         pygame.display.flip()
 
     pygame.quit()
+
 
 if __name__ == '__main__':
     main()
