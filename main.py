@@ -12,6 +12,7 @@ CELL_SIZE = WIDTH // BOARD_SIZE
 # Renkler
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
 
 def draw_board(screen):
     screen.fill(WHITE)
@@ -91,7 +92,7 @@ def main():
 
         if game_over:
             font = pygame.font.Font(None, 36)
-            text = font.render("Oyun Bitti!", True, BLACK)
+            text = font.render("Oyun Bitti!", True, RED)
             screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height() // 2))
             text = font.render("Yeniden Oynamak için Tıklayın", True, BLACK)
             screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 + text.get_height()))
