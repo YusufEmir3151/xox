@@ -1,7 +1,7 @@
 import pygame
-import Settings
 import methods
 import game_base
+import Settings
 
 # Pencere boyutları
 WIDTH = methods.WIDTH
@@ -46,7 +46,7 @@ while running:
             mouse_pos = event.pos
             if methods.fullscreen_checkbox.collidepoint(mouse_pos):
                 fullscreen = not fullscreen
-                methods.toggle_fullscreen(screen)
+                Settings.toggle_fullscreen(screen)
             elif methods.first_player_x_button.collidepoint(mouse_pos):
                 first_player = 'X'
             elif methods.first_player_o_button.collidepoint(mouse_pos):

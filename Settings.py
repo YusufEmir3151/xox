@@ -1,10 +1,10 @@
 import pygame
 import methods
-
+import data
 WIDTH = methods.WIDTH
 HEIGHT = methods.HEIGHT
 BLACK = methods.BLACK
-
+fullscreen = data.fullscreen
 def show_settings():
     global fullscreen, first_player, second_player
     pygame.init()
